@@ -8,16 +8,22 @@ glm::vec2 CohesionRule::computeForce(const std::vector<BoidView>& neighborhood, 
   // glm::normalize(vec) returns the normalized vector (length 1) in the same direction as vec.
 
   // begin solution
-  glm::vec2 cm = {0,0};
+  glm::vec2 cm(0.f);
   int count = 0;
 
   if (neighborhood.empty()) {
     return cohesionForce;
   }
 
-  for (const BoidView& neighbor : neighborhood) {
-    float dist = glm::distance(boid.position, neighbor.position);
-    
+  for (const BoidView& other : neighborhood) {
+    cm += other.position;
+  }
+  cm /= static_cast<float>(neighborhood.size());
+
+  glm::vec2 towardCenter = cm - boid.position;
+
+  if (glm::length(towardCenter) > 0.00001f) {
+    cohesionForce = glm::normalize(towardCenter);
   }
 
   // end solution
