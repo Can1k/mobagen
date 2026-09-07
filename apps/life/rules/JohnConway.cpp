@@ -23,6 +23,9 @@ class Underpopulation : public Condition {
 public:
   bool Test(const AgentContext& context) override {
     // todo: implement the underpopulation condition
+    if (context.aliveNeighbors < 2) {
+
+    }
     throw std::logic_error("Underpopulation condition not implemented yet");
   }
 };
@@ -128,6 +131,17 @@ int JohnConway::CountNeighbors(World& world, Point2D point) {
   //   a square cell has 8 neighbors, one per dx/dy in {-1, 0, 1}, excluding itself
   //   world.Get({point.x + dx, point.y + dy}) wraps around the borders (toroidal)
   // begin solution
+  int count = 0;
+  for (int x = -1; x < 2; ++x) {
+    for (int y = -1; y < 2; ++y) {
+      if (world.Get({point.x + x, point.y + y})) {
+        if (point.x != x && point.y != y) {
+          count++;
+        }
+      }
+    }
+  }
+  return count;
 
   throw std::logic_error("CountNeighbors not implemented yet");
 
