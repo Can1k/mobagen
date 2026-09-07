@@ -14,22 +14,19 @@ glm::vec2 SeparationRule::computeForce(const std::vector<BoidView>& neighborhood
   float maxForce = 5.f;
 
   for (const BoidView& other : neighborhood) {
-    glm::vec2 vec = boid.position - other.position;
+    glm::vec2 vec = boid.position - other.position; // (self - other): away from the neighbour, opposite order from cohesion
     float mag = glm::length(vec);
 
-    if (mag > 0.0001f) {
-      glm::vec2 hat = vec / mag;
+    if (mag > 0.0001f) { // guard as shown in class
+      glm::vec2 hat = vec / mag; // mag already computed, so this is cheaper than glm::normalize
       separatingForce += hat * (desiredMinimalDistance / mag);
     }
   }
 
   float total = glm::length(separatingForce);
-  if (total > maxForce && total > 0.0001) {
+  if (total > maxForce && total > 0.0001) { // guard as shown in class
     separatingForce = separatingForce / total * maxForce;
   }
-
-  // distance = |p2p1|
-  // direction = ^(p2p1)
 
   // end solution
 

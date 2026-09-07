@@ -13,7 +13,7 @@ glm::vec2 BoundedAreaRule::computeForce(const std::vector<BoidView>& neighborhoo
   float h = displaySize.y > 0.f ? displaySize.y : 800.f;
   float d = static_cast<float>(desiredDistance);
 
-  if (d <= 0.f) {
+  if (d <= 0.f) { // slider at 0: will cause division by 0
     return force;
   }
 

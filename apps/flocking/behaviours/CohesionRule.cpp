@@ -18,12 +18,12 @@ glm::vec2 CohesionRule::computeForce(const std::vector<BoidView>& neighborhood, 
   for (const BoidView& other : neighborhood) {
     cm += other.position;
   }
-  cm /= static_cast<float>(neighborhood.size());
+  cm /= static_cast<float>(neighborhood.size()); // Pcm = centre of mass of the neighbourhood
 
-  glm::vec2 towardCenter = cm - boid.position;
+  glm::vec2 towardCenter = cm - boid.position; // (target - self) reversing this makes boids flee instead
 
-  if (glm::length(towardCenter) > 0.00001f) {
-    cohesionForce = glm::normalize(towardCenter);
+  if (glm::length(towardCenter) > 0.00001f) { // As shown in class
+    cohesionForce = glm::normalize(towardCenter); // normalised: distance would otherwise scale the force
   }
 
   // end solution
