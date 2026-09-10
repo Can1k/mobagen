@@ -30,62 +30,49 @@ namespace hexagon {
 class Underpopulation : public Condition {
 public:
   bool Test(const AgentContext& context) override {
-    // todo: implement the underpopulation condition
-    // hint: on the hex grid (B2/S34) a live cell is underpopulated below 3 neighbors
-    throw std::logic_error("Underpopulation condition not implemented yet");
+    return context.aliveNeighbors < 3;
   }
 };
 
 class Overpopulation : public Condition {
 public:
   bool Test(const AgentContext& context) override {
-    // todo: implement the overpopulation condition
-    // hint: on the hex grid (B2/S34) a live cell is overpopulated above 4 neighbors
-    throw std::logic_error("Overpopulation condition not implemented yet");
+    return context.aliveNeighbors > 4;
   }
 };
 
 class Reproduction : public Condition {
 public:
   bool Test(const AgentContext& context) override {
-    // todo: implement the reproduction condition
-    // hint: on the hex grid (B2/S34) a dead cell is born with exactly 2 neighbors
-    throw std::logic_error("Reproduction condition not implemented yet");
+    return context.aliveNeighbors == 2;
   }
 };
 
 class DieAction : public Action {
 public:
   void Execute(const AgentContext& context) override {
-    // todo: implement the die action
-    // hint:
-    //   use the context.world.SetNext() to set the next state of the cell to dead
-    //   use the context.position to get the current cell's position
-    throw std::logic_error("Die action not implemented yet");
+    context.world.SetNext(context.position, false);
   }
 };
 
 class BornAction : public Action {
 public:
   void Execute(const AgentContext& context) override {
-    // see hints in DieAction
-    throw std::logic_error("Born action not implemented yet");
+    context.world.SetNext(context.position, true);
   }
 };
 
 class StayAliveAction : public Action {
 public:
   void Execute(const AgentContext& context) override {
-    // see hints in DieAction
-    throw std::logic_error("StayAlive action not implemented yet");
+    context.world.SetNext(context.position, true);
   }
 };
 
 class StayDeadAction : public Action {
 public:
   void Execute(const AgentContext& context) override {
-    // see hints in DieAction
-    throw std::logic_error("StayDead action not implemented yet");
+    context.world.SetNext(context.position, false);
   }
 };
 }  // namespace hexagon
@@ -101,15 +88,14 @@ HexagonGameOfLife::HexagonGameOfLife() {
   const auto die = std::make_shared<DieAction>();
   const auto born = std::make_shared<BornAction>();
 
-  // todo: add transitions and actions for alive, dead. example:
-  //   alive->AddTransition(std::make_shared<Underpopulation>(), dead, {die});
-  //   dead->AddAction(std::make_shared<StayDeadAction>());
-  // begin solution
+  alive->AddTransition(std::make_shared<Underpopulation>(), dead, {die});
+  alive->AddTransition(std::make_shared<Overpopulation>(), dead, {die});
+  alive->AddAction(std::make_shared<StayAliveAction>());
 
-  SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "HexagonGameOfLife: transitions and actions for alive and dead states not implemented yet");
-
-  // end solution
+  dead->AddTransition(std::make_shared<Reproduction>(), alive, {born});
+  dead->AddAction(std::make_shared<StayDeadAction>());
 }
+
 
 void HexagonGameOfLife::Step(World& world) {
   // relevant functions:
@@ -140,6 +126,24 @@ int HexagonGameOfLife::CountNeighbors(World& world, Point2D point) {
   //   above and two below, shifted by one column depending on the row parity
   //   world.Get() wraps around the borders (toroidal)
   // begin solution
-  throw std::logic_error("CountNeighbors not implemented yet");
-  // end solution
+  static const int evenRowOffsets[6][2] = {
+    {-1, 0}, {1, 0},
+    {-1, -1}, {0, -1},
+    {-1, 1}, {0, 1},
+  };
+  static const int oddRowOffsets[6][2] = {
+    {-1, 0}, {1, 0},
+    {0, -1}, {1, -1},
+    {0, 1}, {1, 1},
+  };
+  const bool oddRow = (point.y % 2 != 0);
+  const auto& offsets = oddRow ? oddRowOffsets : evenRowOffsets;
+
+  int count = 0;
+  for (const auto& offset : offsets) {
+    if (world.Get({point.x + offset[0], point.y + offset[1]})) {
+      count++;
+    }
+  }
+  return count;
 }
