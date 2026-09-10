@@ -36,16 +36,11 @@ void World::SetCurrent(Point2D point, bool value) {
   if (index >= size) index %= size;
   buffer[currentBufferId % 2][index] = value;
 }
-// todo: improve those set / get accessors
+
 bool World::Get(Point2D point) {
-  if (point.x < 0) point.x += width;
-  if (point.x >= width) point.x %= width;
-  if (point.y < 0) point.y += height;
-  if (point.y >= height) point.y %= height;
-  auto index = point.y * width + point.x;
-  auto size = width * height;
-  if (index >= size) index %= size;
-  return buffer[currentBufferId % 2][index];
+  int x = ((point.x % width) + width) % width;
+  int y = ((point.y % height) + height) % height;
+  return buffer[currentBufferId % 2][y * width + x];
 }
 void World::Randomize() {
   for (auto&& elem : buffer[0]) elem = (Random::Range(0, 1) != 0);
