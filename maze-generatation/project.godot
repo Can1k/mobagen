@@ -11,6 +11,7 @@ config_version=5
 [application]
 
 config/name="MazeGeneratation"
+run/main_scene="uid://bbt87d32ivylp"
 config/features=PackedStringArray("4.7", "Forward Plus")
 config/icon="res://icon.svg"
 
